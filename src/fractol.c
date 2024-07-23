@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:24:52 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/07/21 20:17:44 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/07/23 15:43:31 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,50 +31,59 @@ static void ft_error(void)
 }
 
 // ----- HOOKS ------
-
-// Print the window width and height.
+// listen for keypress event for ESC key
 static void my_keyhook(mlx_key_data_t keydata, void* param)
 {
 	if (keydata.key == MLX_KEY_ESCAPE )
 		exit(1);
 }
 
-void printsquare(mlx_image_t* img )
+void printcircle(mlx_image_t *img)
 {
-	int i =  90;
-	int y = 240;
-	int x = 90;
-	while (i <=  y)
+	double angle = 0;
+	int r = 100;
+	while (angle <= M_PI * 2)
 	{
-		mlx_put_pixel(img, i , x , 0x33cc33FF);
-		i++;
+		double x = cos(angle) * r + 200;
+		double y = sin(angle)* r + 200;
+		mlx_put_pixel(img, x, y, 0x33cc33FF);
+		angle += 0.01;
 	}
 }
 
-int32_t	main(void)
+int32_t	main(int argc, char *argv[])
 {
+	t_fractal fractal;
+
+	if (argc == 2 && !ft_strncmp(argv[1], "mandelbrot", 10) || argc == 4 && !ft_strncmp(argv[1], "julia", 5))
+ 	{
+ 		// store name of fractal received from parameters
+		fractal.name = argv[1];
+		fractal.window = mlx_init(WIDTH, HEIGHT, fractal.name, true);
+		if (!fractal.window)
+			ft_error();
+// 		//3. create image that fills the entire window
+		fractal.img = mlx_new_image(fractal.window, WIDTH, HEIGHT);
+		if (!fractal.img || (mlx_image_to_window(fractal.window, fractal.img, 0, 0) < 0))
+			ft_error();
+// 		//4. actual rendering of the fractal
+// 		fractal_render(fractal);
+		printcircle(fractal.img);
+//		// Register a hook and pass mlx as an optional param.
+		// NOTE: Do this before calling mlx_loop!
+		mlx_key_hook(fractal.window, &my_keyhook, NULL);
+// 		//6. start event loop
+		mlx_loop(fractal.window);
+// 		//7. at end destroy the window and free the connection to handle memory leaks - as they both malloc memory
+		mlx_terminate(fractal.window);
+		return (EXIT_SUCCESS);
+	}
+	else
+	{
+
+	}
 	// MLX allows you to define its core behaviour before startup.
 	//mlx_set_setting(MLX_MAXIMIZED, true);
-
-	mlx_t* mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
-	if (!mlx)
-		ft_error();
-
-	/* Do stuff */
-
-	// Create and display the image.
-	mlx_image_t* img = mlx_new_image(mlx, 256, 256);
-	if (!img || (mlx_image_to_window(mlx, img, 0, 0) < 0))
-		ft_error();
-
- 	printsquare(img);
-
-	// Register a hook and pass mlx as an optional param.
-	// NOTE: Do this before calling mlx_loop!
-	mlx_key_hook(mlx, &my_keyhook, NULL);
-	mlx_loop(mlx);
-	mlx_terminate(mlx);
-	return (EXIT_SUCCESS);
 }
 
 // void fractal_render(t_fractal fractal)
