@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:18:45 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/07/23 15:38:00 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/07/23 15:56:23 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <stdlib.h>	// malloc free
 #include <unistd.h>	// write
 #include <stdio.h>	// printf
-#include <math.h>	//
+#include <math.h>	// math functions
 #include "../MLX42/include/MLX42/MLX42.h" //minilibx
 
 # define ERROR_MESSAGE = "Only valid input is \"./fractol mandelbrot\" or \"./fractol julia <real-value> <imaginary-value>\"\n"
@@ -29,6 +29,9 @@ typedef struct	s_fractal {
 	mlx_image_t	*img;
 	char	*name;
 }			t_fractal;
+
+// functions
+void fractal_render(t_fractal fractal);
 
 // utils
 int	ft_strncmp(char *s1, char *s2, int n);
