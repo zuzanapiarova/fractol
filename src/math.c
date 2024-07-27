@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 20:04:01 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/07/23 15:45:49 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/07/26 15:26:32 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,3 @@ so in less iterations the mandelbrot looks like a big blob, in more iterations i
 */
 
 // function to color in outside of the mandelbrot set based on how many iterations it takes until it goes out of bounds
-
-void fractal_render(t_fractal fractal)
-{
-
-}

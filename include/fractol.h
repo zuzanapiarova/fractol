@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:18:45 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/07/23 15:56:23 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/07/27 20:52:55 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,18 @@ typedef struct	s_fractal {
 	mlx_t	*window;
 	mlx_image_t	*img;
 	char	*name;
+	double escape_value;
+	int iterations;
 }			t_fractal;
 
-// functions
-void fractal_render(t_fractal fractal);
+typedef struct	s_complex {
+	double real;
+	double imaginary;
+}				t_complex;
 
-// utils
+////////   functions
+
+//////// utils
 int	ft_strncmp(char *s1, char *s2, int n);
 void malloc_error(void);
 
