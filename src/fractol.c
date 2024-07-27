@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:24:52 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/07/27 20:53:32 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/07/27 21:23:31 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ void set_pixel(int x, int y, t_fractal fractal) // ERROR: WE ARE NOT USING X AND
 	z.real = 0.0; //z.x
 	z.imaginary = 0.0; //z.y
 	// initially c: we map/scale the c constant to the values closer to our set so we can see more clearly - so c(real) is the first x value and c(imaginary is the first y value)
-	c.real = scale(x, -2, 2, 0, WIDTH);
-	c.imaginary = scale(y, 2, -2, 0, HEIGHT);
+	c.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH);
+	c.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT);
 
 	// now we move to iterations and apply the complex function to our point over and over until we reach iterations or it escapes
 	i = 0;
@@ -102,30 +102,21 @@ void set_pixel(int x, int y, t_fractal fractal) // ERROR: WE ARE NOT USING X AND
 	// we iterate until the number of iterations is done or until the point escapes
 	while(i < fractal.iterations)
 	{
-		//printf("%d\n", i);
-		// ERROR: AFTER ITERATION IS 1 IT GOES OUT OF BOUND ?? maybe
 		z = complex_operation(z, c);
-		//printf("x: %f, y: %f\n", z.real, z.imaginary);
-		//printf("check: %f <?> %f\n",(z.real * z.real) + (z.imaginary * z.imaginary), fractal.escape_value);
 		// after each function run we check if the value is not escaped - for the condition we use vectors - real(x) and imaginary(y) parts form odvesny, prepona je ich vektor
 		// all the vectors with prepona = 2 are definitelly escaped - pythagorean theorem compares the odvesny squared to prepona squared which is 4
 		if (pow(z.real, 2) + pow(z.imaginary, 2) > fractal.escape_value)
 		{
-			color = scale(i, 0, 0x0000FF, 0, fractal.iterations);
-			//printf("A. putting pixel: x: %f, y: %f\n", z.real, z.imaginary);
+			color = scale(i, 0, 0xFF00FF, 0, fractal.iterations);
 			mlx_put_pixel(fractal.img, x, y, color);
 			return;
 		}
 		i++;
 	}
-	// and if the point did not escape we set it to color:
-	//mlx_put_pixel(fractal.img, x, y, 0xFF00FF);
-	//HERE IS THE PROBLEM - WHEN WE ITERATED THE SET NUMBER OF TIMES AND POINT STILL DID NOT ESCAPE - WHY IS THE
-	//printf("B. putting pixel: x: %f, y: %f\n", z.real, z.imaginary);
-	mlx_put_pixel(fractal.img, x, y, 0xFFFFFF);
+	mlx_put_pixel(fractal.img, x, y, 0xFFFFFFFF);
 }
 
-// iterates through window pixels one by one, each pixel in each row
+// iterates through window pixels one by one, each pixel in each row, to set its color based on whether it escaped and in how many iterations
 void render_window(t_fractal fractal)
 {
 	int x;
@@ -143,8 +134,12 @@ void render_window(t_fractal fractal)
 int32_t	main(int argc, char *argv[])
 {
 	t_fractal fractal;
-	fractal.iterations = 42;
+	fractal.iterations = 500;
 	fractal.escape_value = 4;
+	fractal.xstart = -2.2;
+	fractal.xend = 0.8;
+	fractal.ystart = 1.2;
+	fractal.yend = -1.8;
 
 	if (argc == 2 && !ft_strncmp(argv[1], "mandelbrot", 10) || argc == 4 && !ft_strncmp(argv[1], "julia", 5))
  	{
