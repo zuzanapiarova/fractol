@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:24:52 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/01 20:11:33 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/01 22:23:56 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,9 @@ void render_window(t_fractal fractal)
 static void my_keyhook(mlx_key_data_t keydata, void *fractal)
 {
 	t_fractal *f = (t_fractal *)fractal;
+	double diff;
 
+	diff = f->xend - f->xstart;
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == 0)
 	{
 		mlx_close_window(f->window);
@@ -126,28 +128,28 @@ static void my_keyhook(mlx_key_data_t keydata, void *fractal)
 	}
 	else if (keydata.key == MLX_KEY_RIGHT && keydata.action == 0)
 	{
-		f->xstart += 0.3;
-		f->xend += 0.3;
+		f->xstart += diff / 5;
+		f->xend += diff / 5;
 	}
 	else if (keydata.key == MLX_KEY_LEFT && keydata.action == 0)
 	{
-		f->xstart -= 0.3;
-		f->xend -= 0.3;
+		f->xstart -= diff / 5;
+		f->xend -= diff / 5;
 	}
 	else if (keydata.key == MLX_KEY_DOWN && keydata.action == 0)
 	{
-		f->ystart -= 0.3;
-		f->yend -= 0.3;
+		f->ystart -= diff / 5;
+		f->yend -= diff / 5;
 	}
 	else if (keydata.key == MLX_KEY_UP && keydata.action == 0)
 	{
-		f->ystart += 0.3;
-		f->yend += 0.3;
+		f->ystart += diff / 5;
+		f->yend += diff / 5;
 	}
 	else if (keydata.key == MLX_KEY_UP && keydata.action == 0)
 	{
-		f->ystart += 0.3;
-		f->yend += 0.3;
+		f->ystart += diff / 5;
+		f->yend += diff / 5;
 	}
 	else if (keydata.key == MLX_KEY_EQUAL && keydata.action == 0)
 	{
@@ -198,7 +200,6 @@ int32_t	main(int argc, char *argv[])
 {
 	t_fractal fractal;
 
-
 	if (argc == 2 && !ft_strncmp(argv[1], "mandelbrot", 10) || argc == 4 && !ft_strncmp(argv[1], "julia", 5))
  	{
  		// store name of fractal received from parameters
@@ -240,4 +241,6 @@ int32_t	main(int argc, char *argv[])
 // julia
 // sierpinski
 // handle resizing the window
+// click and drag
+// zoom follows mouse position
 //
