@@ -6,41 +6,22 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:24:52 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/07/27 21:23:31 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/01 19:24:26 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-// CALL THE PROGRAM: ./fractol(=arg[0]) mandelbrot(=arg[1])        ==>  argc is 2
+// CALL THE PROGRAM: ./fractol(=arg[0]) mandelbrot(=arg[1])   ==>  argc is 2
 
-// we are absivcally just setting color to each pixel based on hbow many iterations it takes for it to escape to infinity
+// we are basically just setting color to each pixel based on how many iterations it takes for point with that coordinates to escape to infinity
 // points that are inside the mandelbrot set 0 are black - never escape, points that are outside based on their color we can tell how many iterations it takes for them to escape
+
 // Exit the program as failure.
 static void ft_error(void)
 {
+	printf("Fractal available for exploration: Mandelbrot, Julia, Sierpinski. Please specify the name as argument to the program. Exiting now.");
 	printf("%s", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
-}
-
-// ----- HOOKS ------
-// listen for keypress event for ESC key
-static void my_keyhook(mlx_key_data_t keydata, void* param)
-{
-	if (keydata.key == MLX_KEY_ESCAPE )
-		exit(1);
-}
-
-void printcircle(mlx_image_t *img)
-{
-	double angle = 0;
-	int r = 100;
-	while (angle <= M_PI * 2)
-	{
-		double x = cos(angle) * r + 200;
-		double y = sin(angle)* r + 200;
-		mlx_put_pixel(img, x, y, 0x33cc33FF);
-		angle += 0.01;
-	}
 }
 
 // mandelbrot math:
@@ -116,7 +97,7 @@ void set_pixel(int x, int y, t_fractal fractal) // ERROR: WE ARE NOT USING X AND
 	mlx_put_pixel(fractal.img, x, y, 0xFFFFFFFF);
 }
 
-// iterates through window pixels one by one, each pixel in each row, to set its color based on whether it escaped and in how many iterations
+// iterates through window pixels one by one, each pixel in each row, to set its color based on whether it escaped and in how many iteration
 void render_window(t_fractal fractal)
 {
 	int x;
@@ -131,10 +112,91 @@ void render_window(t_fractal fractal)
 	}
 }
 
+// ----- HOOKS ------
+// listen for keypress events for ESC, arrows, plus and minus
+static void my_keyhook(mlx_key_data_t keydata, void *fractal)
+{
+	t_fractal *f = (t_fractal *)fractal;
+
+	if (keydata.key == MLX_KEY_ESCAPE )
+	{
+		mlx_close_window(f->window);
+		mlx_terminate(f->window);
+		exit(1);
+	}
+	else if (keydata.key == MLX_KEY_RIGHT)
+	{
+		f->xstart += 0.3;
+		f->xend += 0.3;
+		printf("start: %f, end: %f\n", f->xstart, f->xend);
+	}
+	else if (keydata.key == MLX_KEY_LEFT && keydata.action == 0)
+	{
+		f->xstart -= 0.3;
+		f->xend -= 0.3;
+	}
+	else if (keydata.key == MLX_KEY_DOWN && keydata.action == 0)
+	{
+		f->ystart -= 0.3;
+		f->yend -= 0.3;
+	}
+	else if (keydata.key == MLX_KEY_UP && keydata.action == 0)
+	{
+		f->ystart += 0.3;
+		f->yend += 0.3;
+	}
+	else if (keydata.key == MLX_KEY_UP && keydata.action == 0)
+	{
+		f->ystart += 0.3;
+		f->yend += 0.3;
+	}
+	else if (keydata.key == MLX_KEY_EQUAL && keydata.action == 0)
+	{
+		f->iterations += 5;
+	}
+	else if (keydata.key == MLX_KEY_MINUS && keydata.action == 0)
+	{
+		f->iterations -= 5;
+	}
+	render_window(*f);
+}
+// SCALUJEME NA MOUSE MOVEMENT
+static void my_scrollhook(double xdelta, double ydelta, void *fractal)
+{
+	t_fractal *f = (t_fractal *)fractal;
+
+	//zoom in
+	if (ydelta < 0)
+	{
+		f->ystart -= 0.1;
+		f->yend += 0.1;
+		f->xstart += 0.1;
+		f->xend -= 0.1;
+	}
+	//zoom out
+	else if (ydelta > 0)
+	{
+		f->ystart += 0.1;
+		f->yend -= 0.1;
+		f->xstart -= 0.1;
+		f->xend += 0.1;
+	}
+	render_window(*f);
+}
+
+static void my_closehook(void *fractal)
+{
+	t_fractal *f = (t_fractal *)fractal;
+
+	mlx_close_window(f->window);
+	mlx_terminate(f->window);
+	exit(1);
+}
+
 int32_t	main(int argc, char *argv[])
 {
 	t_fractal fractal;
-	fractal.iterations = 500;
+	fractal.iterations = 10;
 	fractal.escape_value = 4;
 	fractal.xstart = -2.2;
 	fractal.xend = 0.8;
@@ -157,7 +219,9 @@ int32_t	main(int argc, char *argv[])
 		render_window(fractal);
 //		// Register hooks and pass window as optional param and which function should be called
 		// NOTE: Do this before calling mlx_loop!
-		mlx_key_hook(fractal.window, &my_keyhook, NULL);
+		mlx_key_hook(fractal.window, &my_keyhook, &fractal);
+		mlx_scroll_hook(fractal.window, &my_scrollhook, &fractal);
+		mlx_close_hook(fractal.window, &my_closehook, &fractal);
 // 		//6. start event loop
 		mlx_loop(fractal.window);
 // 		//7. at end destroy the window and free the connection to handle memory leaks - as they both malloc memory
@@ -171,10 +235,8 @@ int32_t	main(int argc, char *argv[])
 	}
 }
 
-// ------ TODO ------
-// handle these events - create functions and add hooks to them:
-// 1. + and - increase/decrease number of iterations
-
-// 2. left/right/up/down move the screen to the left/right/up/down by 0.1 point
-
-// 3. roll mouse wheel - zoom in/out
+// TODO:
+// julia
+// sierpinski
+// handle resizing the window
+// 
