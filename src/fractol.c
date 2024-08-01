@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:24:52 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/01 19:24:26 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/01 20:11:33 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,20 @@
 // CALL THE PROGRAM: ./fractol(=arg[0]) mandelbrot(=arg[1])   ==>  argc is 2
 
 // we are basically just setting color to each pixel based on how many iterations it takes for point with that coordinates to escape to infinity
-// points that are inside the mandelbrot set 0 are black - never escape, points that are outside based on their color we can tell how many iterations it takes for them to escape
+// points that are inside the mandelbrot set are black - never escape, points that are outside based on their color we can tell how many iterations it takes for them to escape
 
-// Exit the program as failure.
+// Exit the program as failure
 static void ft_error(void)
 {
-	printf("Fractal available for exploration: Mandelbrot, Julia, Sierpinski. Please specify the name as argument to the program. Exiting now.");
+	printf("Fractals available for exploration: Mandelbrot, Julia, Sierpinski. Please specify the name as argument to the program. Exiting now.");
 	printf("%s", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
 }
 
 // mandelbrot math:
 //point is in mandelbrot if z = z^2 + c
-// z and c are both complex numbers - both have a real and imaginary part
-// initially - in the first iteration: z is 0, c is te actual point
+// z and c are both complex numbers - both have a real and an imaginary part
+// initially - in the first iteration: z is 0, c is the actual pixel in window with its passed x and y coordinates
 // we can illustrate the real value as value at x axis and imaginary value(without the i) as value at the y axis
 
 // linear interpolation function = maps/scales points proportionate and linearly to other points to keep the proportions but scaled in/out
@@ -77,7 +77,7 @@ void set_pixel(int x, int y, t_fractal fractal) // ERROR: WE ARE NOT USING X AND
 	c.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH);
 	c.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT);
 
-	// now we move to iterations and apply the complex function to our point over and over until we reach iterations or it escapes
+	// now we move to iterations and apply the complex function to our point over and over until we reach max iterations or it escapes
 	i = 0;
 	// we perform the complex function for as many iterations as defined - the more iterations the more defined the image is
 	// we iterate until the number of iterations is done or until the point escapes
@@ -118,17 +118,16 @@ static void my_keyhook(mlx_key_data_t keydata, void *fractal)
 {
 	t_fractal *f = (t_fractal *)fractal;
 
-	if (keydata.key == MLX_KEY_ESCAPE )
+	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == 0)
 	{
 		mlx_close_window(f->window);
 		mlx_terminate(f->window);
 		exit(1);
 	}
-	else if (keydata.key == MLX_KEY_RIGHT)
+	else if (keydata.key == MLX_KEY_RIGHT && keydata.action == 0)
 	{
 		f->xstart += 0.3;
 		f->xend += 0.3;
-		printf("start: %f, end: %f\n", f->xstart, f->xend);
 	}
 	else if (keydata.key == MLX_KEY_LEFT && keydata.action == 0)
 	{
@@ -165,21 +164,23 @@ static void my_scrollhook(double xdelta, double ydelta, void *fractal)
 {
 	t_fractal *f = (t_fractal *)fractal;
 
+	printf("xdelta: %f, ydelta: %f\n", xdelta, ydelta);
+	double diff = (f->yend - f->ystart);
 	//zoom in
 	if (ydelta < 0)
 	{
-		f->ystart -= 0.1;
-		f->yend += 0.1;
-		f->xstart += 0.1;
-		f->xend -= 0.1;
+		f->ystart -= 0.1 * diff;
+		f->yend += 0.1 * diff;
+		f->xstart += 0.1 * diff;
+		f->xend -= 0.1 * diff;
 	}
 	//zoom out
-	else if (ydelta > 0)
+	if (ydelta > 0)
 	{
-		f->ystart += 0.1;
-		f->yend -= 0.1;
-		f->xstart -= 0.1;
-		f->xend += 0.1;
+		f->ystart += 0.1 * diff;
+		f->yend -= 0.1 * diff;
+		f->xstart -= 0.1 * diff;
+		f->xend += 0.1 * diff;
 	}
 	render_window(*f);
 }
@@ -196,17 +197,18 @@ static void my_closehook(void *fractal)
 int32_t	main(int argc, char *argv[])
 {
 	t_fractal fractal;
-	fractal.iterations = 10;
-	fractal.escape_value = 4;
-	fractal.xstart = -2.2;
-	fractal.xend = 0.8;
-	fractal.ystart = 1.2;
-	fractal.yend = -1.8;
+
 
 	if (argc == 2 && !ft_strncmp(argv[1], "mandelbrot", 10) || argc == 4 && !ft_strncmp(argv[1], "julia", 5))
  	{
  		// store name of fractal received from parameters
 		fractal.name = argv[1];
+		fractal.iterations = 10;
+		fractal.escape_value = 4;
+		fractal.xstart = -2.2;
+		fractal.xend = 0.8;
+		fractal.ystart = 1.2;
+		fractal.yend = -1.8;
 		fractal.window = mlx_init(WIDTH, HEIGHT, fractal.name, true);
 		if (!fractal.window)
 			malloc_error();
@@ -214,10 +216,9 @@ int32_t	main(int argc, char *argv[])
 		fractal.img = mlx_new_image(fractal.window, WIDTH, HEIGHT);
 		if (!fractal.img || (mlx_image_to_window(fractal.window, fractal.img, 0, 0) < 0))
 			malloc_error();
-		//fractal.img.len = image_width * (bpp / 8)
 //		//4. actual rendering of the fractal
 		render_window(fractal);
-//		// Register hooks and pass window as optional param and which function should be called
+//		// 5. Register hooks and pass window as optional param and which function should be called
 		// NOTE: Do this before calling mlx_loop!
 		mlx_key_hook(fractal.window, &my_keyhook, &fractal);
 		mlx_scroll_hook(fractal.window, &my_scrollhook, &fractal);
@@ -239,4 +240,4 @@ int32_t	main(int argc, char *argv[])
 // julia
 // sierpinski
 // handle resizing the window
-// 
+//
