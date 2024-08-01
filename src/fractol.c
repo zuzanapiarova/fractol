@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:24:52 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/01 22:23:56 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/01 22:51:59 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,41 +22,6 @@ static void ft_error(void)
 	printf("Fractals available for exploration: Mandelbrot, Julia, Sierpinski. Please specify the name as argument to the program. Exiting now.");
 	printf("%s", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
-}
-
-// mandelbrot math:
-//point is in mandelbrot if z = z^2 + c
-// z and c are both complex numbers - both have a real and an imaginary part
-// initially - in the first iteration: z is 0, c is the actual pixel in window with its passed x and y coordinates
-// we can illustrate the real value as value at x axis and imaginary value(without the i) as value at the y axis
-
-// linear interpolation function = maps/scales points proportionate and linearly to other points to keep the proportions but scaled in/out
-double scale(double unscaled_num, double new_min, double new_max, double old_min, double old_max)
-{
-	return ((new_max - new_min) * (unscaled_num - old_min) / (old_max - old_min) + new_min);
-}
-
-// this function does the operation z = z^2 + c
-t_complex complex_operation(t_complex z, t_complex c)
-{
-	t_complex z_squared;
-	t_complex result;
-
-	// squaring complex number - z^2
-	// math: complex number is basically : cnum(real) + cnum(imaginary) --> rnum + inum --> rnum + inum*i
-	// so squaring cnum^2 = (cnum(real) + cnum(imaginary))^2 = cnum(real)^2 + 2*cnum(real)*cnum(imaginary) + cnum(imaginary)^2
-	// 			   cnum^2 = (rnum + inum*i)^2 = rnum^2 + 2*rnum*inum*i + inum^2*i^2
-	// but i^2 is -1 so this imaginary component turns into real component and only imaginary number left is 2*rnum*inum*i
-	// --> cnum^2 = rnum^2 - inum^2 + 2*rnum*inum*i
-	//             |------real-----| |--imaginary--| --> we get new real and new imaginary parts
-
-	z_squared.real = pow(z.real, 2) - pow(z.imaginary, 2);
-	z_squared.imaginary = 2 * z.real * z.imaginary;
-
-	// adding two complex numbers - z^2 + c
-	result.real = z_squared.real + c.real;
-	result.imaginary = z_squared.imaginary + c.imaginary;
-	return result;
 }
 
 // for each pixel we call this function that checks if the mandelbrot function used on that pixel escapes in given amount of iterations
@@ -110,90 +75,6 @@ void render_window(t_fractal fractal)
 		while(++x < WIDTH)
 			set_pixel(x, y, fractal);
 	}
-}
-
-// ----- HOOKS ------
-// listen for keypress events for ESC, arrows, plus and minus
-static void my_keyhook(mlx_key_data_t keydata, void *fractal)
-{
-	t_fractal *f = (t_fractal *)fractal;
-	double diff;
-
-	diff = f->xend - f->xstart;
-	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == 0)
-	{
-		mlx_close_window(f->window);
-		mlx_terminate(f->window);
-		exit(1);
-	}
-	else if (keydata.key == MLX_KEY_RIGHT && keydata.action == 0)
-	{
-		f->xstart += diff / 5;
-		f->xend += diff / 5;
-	}
-	else if (keydata.key == MLX_KEY_LEFT && keydata.action == 0)
-	{
-		f->xstart -= diff / 5;
-		f->xend -= diff / 5;
-	}
-	else if (keydata.key == MLX_KEY_DOWN && keydata.action == 0)
-	{
-		f->ystart -= diff / 5;
-		f->yend -= diff / 5;
-	}
-	else if (keydata.key == MLX_KEY_UP && keydata.action == 0)
-	{
-		f->ystart += diff / 5;
-		f->yend += diff / 5;
-	}
-	else if (keydata.key == MLX_KEY_UP && keydata.action == 0)
-	{
-		f->ystart += diff / 5;
-		f->yend += diff / 5;
-	}
-	else if (keydata.key == MLX_KEY_EQUAL && keydata.action == 0)
-	{
-		f->iterations += 5;
-	}
-	else if (keydata.key == MLX_KEY_MINUS && keydata.action == 0)
-	{
-		f->iterations -= 5;
-	}
-	render_window(*f);
-}
-// SCALUJEME NA MOUSE MOVEMENT
-static void my_scrollhook(double xdelta, double ydelta, void *fractal)
-{
-	t_fractal *f = (t_fractal *)fractal;
-
-	printf("xdelta: %f, ydelta: %f\n", xdelta, ydelta);
-	double diff = (f->yend - f->ystart);
-	//zoom in
-	if (ydelta < 0)
-	{
-		f->ystart -= 0.1 * diff;
-		f->yend += 0.1 * diff;
-		f->xstart += 0.1 * diff;
-		f->xend -= 0.1 * diff;
-	}
-	//zoom out
-	if (ydelta > 0)
-	{
-		f->ystart += 0.1 * diff;
-		f->yend -= 0.1 * diff;
-		f->xstart -= 0.1 * diff;
-		f->xend += 0.1 * diff;
-	}
-	render_window(*f);
-}
-
-static void my_closehook(void *fractal)
-{
-	t_fractal *f = (t_fractal *)fractal;
-
-	mlx_close_window(f->window);
-	mlx_terminate(f->window);
-	exit(1);
 }
 
 int32_t	main(int argc, char *argv[])
