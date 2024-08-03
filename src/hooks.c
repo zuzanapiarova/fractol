@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 22:45:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/03 16:23:29 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/03 17:39:07 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,22 @@ void my_keyhook(mlx_key_data_t keydata, void *fractal)
 	else if (keydata.key == MLX_KEY_MINUS && keydata.action == 0)
 	{
 		f->iterations -= 5;
+	}
+	else if (keydata.key == MLX_KEY_A && keydata.action == 0)
+	{
+		f->julia_r -= 0.01;
+	}
+	else if (keydata.key == MLX_KEY_D && keydata.action == 0)
+	{
+		f->julia_r += 0.01;
+	}
+	else if (keydata.key == MLX_KEY_W && keydata.action == 0)
+	{
+		f->julia_i -= 0.01;
+	}
+	else if (keydata.key == MLX_KEY_S && keydata.action == 0)
+	{
+		f->julia_i += 0.01;
 	}
 	render_window(*f);
 }

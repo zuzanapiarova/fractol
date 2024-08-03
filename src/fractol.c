@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:24:52 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/03 17:22:12 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/03 17:29:59 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,34 +36,6 @@ void set_pixel(int x, int y, t_fractal fractal) // ERROR: WE ARE NOT USING X AND
 
 	// 1st point:
 	//initially z: first iteration is given that z is 0:
-
-	// if (!ft_strncmp(fractal.name, "julia", 5))
-	// {
-	// 	z.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH); //z.x
-	// 	z.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT); //z.y
-	// 	// initially c: we map/scale the c constant to the values closer to our set so we can see more clearly - so c(real) is the first x value and c(imaginary is the first y value)
-	// 	// c.real = scale(fractal.julia_r, fractal.xstart, fractal.xend, 0, WIDTH);
-	// 	// c.imaginary = scale(fractal.julia_i, fractal.ystart, fractal.yend, 0, HEIGHT);
-	// 	// z.real = 0.0; //z.x
-	// 	// z.imaginary = 0.0; //z.y
-	// 	// z.real = scale(fractal.julia_r, fractal.xstart, fractal.xend, 0, WIDTH);
-	// 	// z.imaginary = scale(fractal.julia_i, fractal.ystart, fractal.yend, 0, HEIGHT);
-	// 	// z.real = fractal.julia_r;
-	// 	// z.imaginary = fractal.julia_i;
-	// 	// c.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH);
-	// 	// c.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT);
-	// 	c.real = fractal.julia_r;
-	// 	c.imaginary = fractal.julia_i;
-	// }
-	// else if (!ft_strncmp(fractal.name, "mandelbrot", 10))
-	// {
-	// 	// initially c: we map/scale the c constant to the values closer to our set so we can see more clearly - so c(real) is the first x value and c(imaginary is the first y value)
-	// 	z.real = 0.0; //z.x
-	// 	z.imaginary = 0.0; //z.y
-	// 	c.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH);
-	// 	c.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT);
-	// }
-
 	if (!ft_strncmp(fractal.name, "julia", 5))
 	{
 		z.real = (scale(x, fractal.xstart, fractal.xend, 0, WIDTH));
