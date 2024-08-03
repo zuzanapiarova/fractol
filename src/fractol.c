@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:24:52 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/01 22:51:59 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/03 17:22:12 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,48 @@ void set_pixel(int x, int y, t_fractal fractal) // ERROR: WE ARE NOT USING X AND
 
 	// 1st point:
 	//initially z: first iteration is given that z is 0:
-	z.real = 0.0; //z.x
-	z.imaginary = 0.0; //z.y
-	// initially c: we map/scale the c constant to the values closer to our set so we can see more clearly - so c(real) is the first x value and c(imaginary is the first y value)
-	c.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH);
-	c.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT);
+
+	// if (!ft_strncmp(fractal.name, "julia", 5))
+	// {
+	// 	z.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH); //z.x
+	// 	z.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT); //z.y
+	// 	// initially c: we map/scale the c constant to the values closer to our set so we can see more clearly - so c(real) is the first x value and c(imaginary is the first y value)
+	// 	// c.real = scale(fractal.julia_r, fractal.xstart, fractal.xend, 0, WIDTH);
+	// 	// c.imaginary = scale(fractal.julia_i, fractal.ystart, fractal.yend, 0, HEIGHT);
+	// 	// z.real = 0.0; //z.x
+	// 	// z.imaginary = 0.0; //z.y
+	// 	// z.real = scale(fractal.julia_r, fractal.xstart, fractal.xend, 0, WIDTH);
+	// 	// z.imaginary = scale(fractal.julia_i, fractal.ystart, fractal.yend, 0, HEIGHT);
+	// 	// z.real = fractal.julia_r;
+	// 	// z.imaginary = fractal.julia_i;
+	// 	// c.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH);
+	// 	// c.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT);
+	// 	c.real = fractal.julia_r;
+	// 	c.imaginary = fractal.julia_i;
+	// }
+	// else if (!ft_strncmp(fractal.name, "mandelbrot", 10))
+	// {
+	// 	// initially c: we map/scale the c constant to the values closer to our set so we can see more clearly - so c(real) is the first x value and c(imaginary is the first y value)
+	// 	z.real = 0.0; //z.x
+	// 	z.imaginary = 0.0; //z.y
+	// 	c.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH);
+	// 	c.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT);
+	// }
+
+	if (!ft_strncmp(fractal.name, "julia", 5))
+	{
+		z.real = (scale(x, fractal.xstart, fractal.xend, 0, WIDTH));
+		z.imaginary = (scale(y, fractal.ystart, fractal.yend, 0, HEIGHT));
+		c.real = fractal.julia_r;
+		c.imaginary = fractal.julia_i;
+	}
+	else
+	{
+		z.real = 0;
+		z.imaginary = 0;
+		c.real = scale(x, fractal.xstart, fractal.xend, 0, WIDTH); //z.x
+		c.imaginary = scale(y, fractal.ystart, fractal.yend, 0, HEIGHT); //z.y
+	}
 
 	// now we move to iterations and apply the complex function to our point over and over until we reach max iterations or it escapes
 	i = 0;
@@ -81,10 +118,15 @@ int32_t	main(int argc, char *argv[])
 {
 	t_fractal fractal;
 
-	if (argc == 2 && !ft_strncmp(argv[1], "mandelbrot", 10) || argc == 4 && !ft_strncmp(argv[1], "julia", 5))
+	if (argc == 2 && !ft_strncmp(argv[1], "mandelbrot", 10) || argc >= 4 && !ft_strncmp(argv[1], "julia", 5))
  	{
- 		// store name of fractal received from parameters
+ 		// get info from arguments and store it properly
 		fractal.name = argv[1];
+		if (argv[2] && argv[3])
+		{
+			fractal.julia_r = atod(argv[2]);
+			fractal.julia_i = atod(argv[3]);
+		}
 		fractal.iterations = 10;
 		fractal.escape_value = 4;
 		fractal.xstart = -2.2;

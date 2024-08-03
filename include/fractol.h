@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:18:45 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/01 22:51:14 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/02 15:05:52 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,9 @@ typedef struct	s_fractal {
 	double		xend;
 	double		ystart;
 	double		yend;
+	// for julia set - get it from arguments
+	double julia_r;
+	double julia_i;
 }				t_fractal;
 
 typedef struct	s_complex {
@@ -53,6 +56,9 @@ void my_closehook(void *fractal);
 // utils
 int	ft_strncmp(char *s1, char *s2, int n);
 void malloc_error(void);
+double atod(char *str);
+
+// math
 double scale(double unscaled_num, double new_min, double new_max, double old_min, double old_max);
 t_complex complex_operation(t_complex z, t_complex c);
 

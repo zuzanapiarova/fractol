@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 22:45:53 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/01 22:52:23 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/03 16:23:29 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void my_scrollhook(double xdelta, double ydelta, void *fractal)
 {
 	t_fractal *f = (t_fractal *)fractal;
 
-	printf("xdelta: %f, ydelta: %f\n", xdelta, ydelta);
 	double diff = (f->yend - f->ystart);
 	//zoom in
 	if (ydelta < 0)
