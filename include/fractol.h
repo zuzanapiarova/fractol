@@ -6,11 +6,66 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 19:18:45 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/02 15:05:52 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/08 19:33:23 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRACTOL_H
+# define FRACTOL_H
+
+# include <stdlib.h> // malloc free
+# include <unistd.h> // write
+# include <stdio.h> // printf
+# include <math.h> // math functions
+# include "../MLX42/include/MLX42/MLX42.h" //minilibx
+
+# define HEIGHT	1000
+# define WIDTH	1000
+# define W 0xFF00FF
+
+typedef struct s_fractal
+{
+	void		*fractal;
+	mlx_t		*window;
+	mlx_image_t	*img;
+	char		*name;
+	double		escape_value;
+	int			iters;
+	double		x;
+	double		y;
+	double		xstart;
+	double		xend;
+	double		ystart;
+	double		yend;
+	double		julia_r;
+	double		julia_i;
+	double		diff;
+}				t_fractal;
+
+typedef struct s_complex
+{
+	double		real;
+	double		imaginary;
+}				t_complex;
+
+// main logic
+void		render_window(t_fractal fractal);
+// hooks
+void		my_keyhook(mlx_key_data_t keydata, void *fractal);
+void		my_scrollhook(double xdelta, double ydelta, void *fractal);
+void		my_closehook(void *fractal);
+// utils
+int			ft_strncmp(char *s1, char *s2, int n);
+void		malloc_error(void);
+double		atod(char *str);
+void		ft_putstr(char *s);
+// math
+double		scale(double num, double new_min, double new_max, double old_max);
+t_complex	complex_operation(t_complex z, t_complex c);
+
+#endif
+
+/* #ifndef FRACTOL_H
 # define FRACTOL_H
 
 #include <stdlib.h>	// malloc free
@@ -62,4 +117,4 @@ double atod(char *str);
 double scale(double unscaled_num, double new_min, double new_max, double old_min, double old_max);
 t_complex complex_operation(t_complex z, t_complex c);
 
-#endif
+#endif */

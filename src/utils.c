@@ -6,11 +6,12 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 20:04:40 by zuzanapiaro       #+#    #+#             */
-/*   Updated: 2024/08/02 14:58:39 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2024/08/08 19:32:35 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
+// #include "../include/fractol.h"
 
 int	ft_strncmp(char *s1, char *s2, int n)
 {
@@ -25,26 +26,36 @@ int	ft_strncmp(char *s1, char *s2, int n)
 	return (*s1 - *s2);
 }
 
-double atod(char *str)
+void	ft_putstr(char *s)
 {
-	long i;
-	double d;
-	double pow;
-	int sign;
+	int	i;
 
 	i = 0;
+	while (s[i])
+	{
+		write(1, &s[i], 1);
+		i++;
+	}
+}
+
+double	atod(char *str)
+{
+	long	in;
+	double	d;
+	double	pow;
+	int		sign;
+
+	in = 0;
 	d = 0;
 	pow = 1;
 	sign = 1;
-	while (*str == 32)
-		str++;
-	while (*str == '+' || *str == '-')
+	while (*str == 32 || *str == '+' || *str == '-')
 	{
 		if (*str++ == '-')
 			sign *= -1;
 	}
 	while (*str >= '0' && *str <= '9')
-		i = i * 10 + (*str++ - '0');
+		in = in * 10 + (*str++ - '0');
 	if (*str == '.' || *str == ',')
 		str++;
 	while (*str >= '0' && *str <= '9')
@@ -52,10 +63,10 @@ double atod(char *str)
 		pow = pow / 10;
 		d = d + ((*str++ - '0') * pow);
 	}
-	return ((i + d) * sign);
+	return ((in + d) * sign);
 }
 
-void malloc_error(void)
+void	malloc_error(void)
 {
 	perror("Memory allocation failed. Exiting now.");
 	exit(EXIT_FAILURE);
