@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fractol.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:21 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/09/12 19:27:44 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/23 10:36:10 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,20 @@
 
 // clone MLX42: git clone https://github.com/codam-coding-college/MLX42.git
 
-// Exit the program when given wrong input
-static void	ft_error(void)
-{
-	ft_putstr_fd("Fractals available for exploration:"
-		"\n\tMandelbrot\n\tJulia <real> <imaginary> //best between (-1,1)\n\t"
-		"Please specify the name and in case of Julia "
-		"parameters as arguments to the program.\nExiting now.", 1);
-	exit(EXIT_FAILURE);
-}
-
 // for each pixel we perform the mandelbrot set function z = z^2 + c
 // and color it dependeing on how many iterations it took for point to escape
 // leave white if point did not escape in fractal.iterations num of iterations
-void	set_pixel(int x, int y, t_fractal f)
+void set_pixel(int x, int y, t_fractal f)
 {
-	t_complex	z;
-	t_complex	c;
-	int			i;
+	t_complex z;
+	t_complex c;
+	int i;
 
 	z.real = 0;
 	z.imaginary = 0;
 	c.real = scale(x, f.xstart, f.xend, WIDTH);
 	c.imaginary = scale(y, f.ystart, f.yend, HEIGHT);
-	if (!ft_strncmp(f.name, "julia", 5))
+	if (!ft_strncmp(f.name, "julia\0", 6))
 	{
 		z.real = (scale(x, f.xstart, f.xend, WIDTH));
 		z.imaginary = (scale(y, f.ystart, f.yend, HEIGHT));
@@ -57,10 +47,10 @@ void	set_pixel(int x, int y, t_fractal f)
 
 // iterates through window pixels one by one, each pixel in each row,
 // to set its color based on whether it escaped and in how many iteration
-void	render_window(t_fractal fractal)
+void render_window(t_fractal fractal)
 {
-	int	x;
-	int	y;
+	int x;
+	int y;
 
 	y = -1;
 	while (++y < HEIGHT)
@@ -72,13 +62,13 @@ void	render_window(t_fractal fractal)
 }
 
 // initialize the fractal struct with the initial data
-void	fractal_init(t_fractal *f, char *name)
+void fractal_init(t_fractal *f, char *name)
 {
 	f->name = name;
 	f->iters = 15;
 	f->escape_value = 8;
 	f->colorway = "multi";
-	f->inside = P;
+	f->inside = W;
 	f->xstart = -2.2;
 	f->xend = 0.8;
 	f->ystart = 1.2;
@@ -99,15 +89,39 @@ void	fractal_init(t_fractal *f, char *name)
 	}
 }
 
-int32_t	main(int argc, char *argv[])
+int parse_arg(char *argv1)
 {
-	t_fractal	fractal;
+	char *copy;
+	int dot;
 
-	if ((argc == 2 && !ft_strncmp(argv[1], "mandelbrot", 10))
-		|| (argc >= 4 && !ft_strncmp(argv[1], "julia", 5)))
+	if (argv1 == NULL)
+		return (ERROR);
+	copy = argv1;
+	dot = 0;
+	if (*copy == '-')
+		copy++;
+	while (*copy)
+	{
+		if (*copy == '.' && (!dot || *(copy + 1) == '\0'))
+			dot++;
+		else if (*copy == '.' && dot)
+			return (ft_error("Extra dot.\n"));
+		else if (!ft_isdigit(*copy))
+			return (ft_error("Contains characters other than digits.\n"));
+		printf("c: %c", *copy);
+			copy++;
+	}
+	return (SUCCESS);
+}
+
+int32_t main(int argc, char *argv[])
+{
+	t_fractal fractal;
+
+	if ((argc == 2 && !ft_strncmp(argv[1], "mandelbrot\0", 11)) || (argc >= 4 && !ft_strncmp(argv[1], "julia\0", 6) && parse_arg(argv[2]) == SUCCESS && parse_arg(argv[3]) == SUCCESS))
 	{
 		fractal_init(&fractal, argv[1]);
-		if (argv[2] && argv[3])
+		if (!ft_strncmp(fractal.name, "julia\0", 6))
 		{
 			fractal.julia_r = atod(argv[2]);
 			fractal.julia_i = atod(argv[3]);
@@ -122,6 +136,6 @@ int32_t	main(int argc, char *argv[])
 		return (EXIT_SUCCESS);
 	}
 	else
-		ft_error();
+		ft_exit();
 	return (0);
 }

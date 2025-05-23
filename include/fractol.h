@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fractol.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:40 by zpiarova          #+#    #+#             */
-/*   Updated: 2024/09/12 18:57:32 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/23 10:30:36 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 // preprocessor macros
 # define HEIGHT	1000
 # define WIDTH	1000
+# define ERROR 1
+# define SUCCESS 0
 # define W 0xffffffff
 # define B 0x000000ff
 # define A 0x01ffffff
@@ -81,8 +83,12 @@ void		my_closehook(void *fractal);
 // utils
 int			ft_strncmp(char *s1, char *s2, int n);
 double		atod(char *str);
-void		ft_putstr_fd(char *s, int fd);
 int			set_color(int i, char *color);
+int			ft_isdigit(int c);
+int			ft_error(char *msg);
+size_t		ft_strlen(const char *str);
+void		ft_exit(void);
+
 // math
 double		scale(double num, double new_min, double new_max, double old_max);
 t_complex	complex_operation(t_complex z, t_complex c);
