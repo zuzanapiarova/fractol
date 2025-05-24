@@ -6,11 +6,37 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:56:45 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/23 10:30:23 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/24 12:45:48 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fractol.h"
+
+// checks if argument has only digits or 1 dot and possibly only 1 minus
+int parse_arg(char *argv1)
+{
+	char *copy;
+	int dot;
+
+	if (argv1 == NULL)
+		return (ERROR);
+	copy = argv1;
+	dot = 0;
+	if (*copy == '-')
+		copy++;
+	while (*copy)
+	{
+		if (*copy == '.' && (!dot || *(copy + 1) == '\0'))
+			dot++;
+		else if (*copy == '.' && dot)
+			return (ft_error("Extra dot.\n"));
+		else if (!ft_isdigit(*copy))
+			return (ft_error("Contains characters other than digits.\n"));
+		printf("c: %c", *copy);
+			copy++;
+	}
+	return (SUCCESS);
+}
 
 int	ft_error(char *msg)
 {
@@ -18,12 +44,17 @@ int	ft_error(char *msg)
 	return (ERROR);
 }
 
+void	clean_exit(t_fractal *f, int return_value)
+{
+	mlx_close_window(f->window);
+	mlx_terminate(f->window);
+	exit(return_value);
+}
+
 // Exit the program when given wrong input
 void ft_exit(void)
 {
-	write(1, "Fractals available for exploration:\n", 36);
-	write(1, "./fractol Mandelbrot\n", 21);
-	write(1,"./fractol julia real<-1,1> imaginary<-1,1>\n", 43);
+
 	exit(EXIT_FAILURE);
 }
 

@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:21 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/23 10:36:10 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/24 13:26:12 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,24 +47,32 @@ void set_pixel(int x, int y, t_fractal f)
 
 // iterates through window pixels one by one, each pixel in each row,
 // to set its color based on whether it escaped and in how many iteration
-void render_window(t_fractal fractal)
+void *render_window(void *arg)
 {
 	int x;
 	int y;
+	t_fractal *fractal;
+
+	fractal = (t_fractal *)arg;
 
 	y = -1;
 	while (++y < HEIGHT)
 	{
 		x = -1;
 		while (++x < WIDTH)
-			set_pixel(x, y, fractal);
+			set_pixel(x, y, *fractal);
 	}
 }
 
 // initialize the fractal struct with the initial data
-void fractal_init(t_fractal *f, char *name)
+void fractal_init(t_fractal *f, char *name, char *arg1, char *arg2)
 {
 	f->name = name;
+	if (!ft_strncmp(name, "julia\0", 6))
+	{
+		f->julia_r = atod(arg1);
+		f->julia_i = atod(arg2);
+	}
 	f->iters = 15;
 	f->escape_value = 8;
 	f->colorway = "multi";
@@ -73,69 +81,43 @@ void fractal_init(t_fractal *f, char *name)
 	f->xend = 0.8;
 	f->ystart = 1.2;
 	f->yend = -1.8;
+	f->running = true;
 	f->window = mlx_init(WIDTH, HEIGHT, f->name, false);
 	if (!f->window)
-	{
-		mlx_close_window(f->window);
-		mlx_terminate(f->window);
-		exit(EXIT_FAILURE);
-	}
+		clean_exit(f, EXIT_FAILURE);
 	f->img = mlx_new_image(f->window, WIDTH, HEIGHT);
 	if (!f->img || (mlx_image_to_window(f->window, f->img, 0, 0) < 0))
+		clean_exit(f, EXIT_FAILURE);
+	pthread_mutex_init(&(f->running_lock), NULL);
+	for (int i = 0; i < NUM_THREADS; ++i)
 	{
-		mlx_close_window(f->window);
-		mlx_terminate(f->window);
-		exit(EXIT_FAILURE);
+		if (pthread_create(&f->threads[i], NULL, render_window, (void *)f) == ERROR)
+			clean_exit(f, EXIT_FAILURE);
 	}
-}
-
-int parse_arg(char *argv1)
-{
-	char *copy;
-	int dot;
-
-	if (argv1 == NULL)
-		return (ERROR);
-	copy = argv1;
-	dot = 0;
-	if (*copy == '-')
-		copy++;
-	while (*copy)
-	{
-		if (*copy == '.' && (!dot || *(copy + 1) == '\0'))
-			dot++;
-		else if (*copy == '.' && dot)
-			return (ft_error("Extra dot.\n"));
-		else if (!ft_isdigit(*copy))
-			return (ft_error("Contains characters other than digits.\n"));
-		printf("c: %c", *copy);
-			copy++;
-	}
-	return (SUCCESS);
 }
 
 int32_t main(int argc, char *argv[])
 {
 	t_fractal fractal;
 
-	if ((argc == 2 && !ft_strncmp(argv[1], "mandelbrot\0", 11)) || (argc >= 4 && !ft_strncmp(argv[1], "julia\0", 6) && parse_arg(argv[2]) == SUCCESS && parse_arg(argv[3]) == SUCCESS))
-	{
-		fractal_init(&fractal, argv[1]);
-		if (!ft_strncmp(fractal.name, "julia\0", 6))
-		{
-			fractal.julia_r = atod(argv[2]);
-			fractal.julia_i = atod(argv[3]);
-		}
-		render_window(fractal);
-		mlx_key_hook(fractal.window, &my_keyhook, &fractal);
-		mlx_scroll_hook(fractal.window, &my_scrollhook, &fractal);
-		mlx_close_hook(fractal.window, &my_closehook, &fractal);
-		mlx_loop(fractal.window);
-		mlx_close_window(fractal.window);
-		mlx_terminate(fractal.window);
-		return (EXIT_SUCCESS);
-	}
+	if ((argc == 2 && !ft_strncmp(argv[1], "mandelbrot\0", 11))
+		|| (argc >= 4 && !ft_strncmp(argv[1], "julia\0", 6) 
+		&& parse_arg(argv[2]) == SUCCESS && parse_arg(argv[3]) == SUCCESS))
+		fractal_init(&fractal, argv[1], argv[2], argv[3]);
 	else
-		ft_exit();
-	return (0);
+	{
+		write(1, "Fractals available for exploration:\n", 36);
+		write(1, "./fractol Mandelbrot\n", 21);
+		write(1,"./fractol julia real<-1,1> imaginary<-1,1>\n", 43);
+		return (ERROR);
+	}
+	mlx_key_hook(fractal.window, &my_keyhook, &fractal);
+	mlx_scroll_hook(fractal.window, &my_scrollhook, &fractal);
+	mlx_close_hook(fractal.window, &my_closehook, &fractal);
+	mlx_loop(fractal.window);
+	for (int i = 0; i < NUM_THREADS; ++i)
+	{
+		pthread_join(threads[i], NULL);
+	}
+	clean_exit(&fractal, EXIT_SUCCESS);
 }

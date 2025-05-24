@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:40 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/23 10:30:36 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/24 13:20:02 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@
 # include <unistd.h>	// write
 # include <stdio.h>	// printf
 # include <math.h>	// math functions
+# include <pthread.h>
 # include "../MLX42/include/MLX42/MLX42.h" //minilibx
 
 // preprocessor macros
 # define HEIGHT	1000
 # define WIDTH	1000
+# define NUM_THREADS 4
 # define ERROR 1
 # define SUCCESS 0
 # define W 0xffffffff
@@ -52,27 +54,30 @@
 
 typedef struct s_fractal
 {
-	mlx_t		*window;
-	mlx_image_t	*img;
-	char		*name;
-	double		escape_value;
-	int			iters;
-	char		*colorway;
-	int			inside;
-	double		xstart;
-	double		xend;
-	double		ystart;
-	double		yend;
-	double		diff;
-	double		julia_r;
-	double		julia_i;
-}				t_fractal;
+	mlx_t			*window;
+	mlx_image_t		*img;
+	char			*name;
+	double			julia_r;
+	double			julia_i;
+	pthread_t		threads[NUM_THREADS];
+	bool			running;
+	pthread_mutex_t	running_lock;
+	double			escape_value;
+	int				iters;
+	char			*colorway;
+	int				inside;
+	double			xstart;
+	double			xend;
+	double			ystart;
+	double			yend;
+	double			diff;
+}					t_fractal;
 
 typedef struct s_complex
 {
-	double		real;
-	double		imaginary;
-}				t_complex;
+	double			real;
+	double			imaginary;
+}					t_complex;
 
 // main logic
 void		render_window(t_fractal fractal);
@@ -88,6 +93,8 @@ int			ft_isdigit(int c);
 int			ft_error(char *msg);
 size_t		ft_strlen(const char *str);
 void		ft_exit(void);
+int			parse_arg(char *argv1);
+void		clean_exit(t_fractal *f, int return_value);
 
 // math
 double		scale(double num, double new_min, double new_max, double old_max);
