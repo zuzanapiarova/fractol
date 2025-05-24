@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:56:45 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/23 10:30:23 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/24 13:44:15 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,30 @@ int	ft_error(char *msg)
 	return (ERROR);
 }
 
-// Exit the program when given wrong input
-void ft_exit(void)
+// checks if argument is only digits with one dot, possibly starts with 1 minus
+int parse_arg(char *argv1)
 {
-	write(1, "Fractals available for exploration:\n", 36);
-	write(1, "./fractol Mandelbrot\n", 21);
-	write(1,"./fractol julia real<-1,1> imaginary<-1,1>\n", 43);
-	exit(EXIT_FAILURE);
+	char *copy;
+	int dot;
+
+	if (argv1 == NULL)
+		return (ERROR);
+	copy = argv1;
+	dot = 0;
+	if (*copy == '-')
+		copy++;
+	while (*copy)
+	{
+		if (*copy == '.' && (!dot || *(copy + 1) == '\0'))
+			dot++;
+		else if (*copy == '.' && dot)
+			return (ft_error("Extra dot.\n"));
+		else if (!ft_isdigit(*copy))
+			return (ft_error("Contains characters other than digits.\n"));
+		printf("c: %c", *copy);
+			copy++;
+	}
+	return (SUCCESS);
 }
 
 int	set_color(int i, char *color)

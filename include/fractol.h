@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:40 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/23 10:30:36 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/24 13:44:49 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int			set_color(int i, char *color);
 int			ft_isdigit(int c);
 int			ft_error(char *msg);
 size_t		ft_strlen(const char *str);
-void		ft_exit(void);
+int 		parse_arg(char *argv1);
 
 // math
 double		scale(double num, double new_min, double new_max, double old_max);

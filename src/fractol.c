@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:21 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/23 10:36:10 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/24 13:42:41 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,14 @@ void render_window(t_fractal fractal)
 }
 
 // initialize the fractal struct with the initial data
-void fractal_init(t_fractal *f, char *name)
+void fractal_init(t_fractal *f, char **argv)
 {
-	f->name = name;
+	f->name = argv[1];
+	if (!ft_strncmp(f->name, "julia\0", 6))
+	{
+		f->julia_r = atod(argv[2]);
+		f->julia_i = atod(argv[3]);
+	}
 	f->iters = 15;
 	f->escape_value = 8;
 	f->colorway = "multi";
@@ -89,43 +94,21 @@ void fractal_init(t_fractal *f, char *name)
 	}
 }
 
-int parse_arg(char *argv1)
-{
-	char *copy;
-	int dot;
-
-	if (argv1 == NULL)
-		return (ERROR);
-	copy = argv1;
-	dot = 0;
-	if (*copy == '-')
-		copy++;
-	while (*copy)
-	{
-		if (*copy == '.' && (!dot || *(copy + 1) == '\0'))
-			dot++;
-		else if (*copy == '.' && dot)
-			return (ft_error("Extra dot.\n"));
-		else if (!ft_isdigit(*copy))
-			return (ft_error("Contains characters other than digits.\n"));
-		printf("c: %c", *copy);
-			copy++;
-	}
-	return (SUCCESS);
-}
-
 int32_t main(int argc, char *argv[])
 {
 	t_fractal fractal;
 
-	if ((argc == 2 && !ft_strncmp(argv[1], "mandelbrot\0", 11)) || (argc >= 4 && !ft_strncmp(argv[1], "julia\0", 6) && parse_arg(argv[2]) == SUCCESS && parse_arg(argv[3]) == SUCCESS))
+	if ((argc == 2 && !ft_strncmp(argv[1], "mandelbrot\0", 11))
+		|| (argc >= 4 && !ft_strncmp(argv[1], "julia\0", 6)
+		&& parse_arg(argv[2]) == SUCCESS && parse_arg(argv[3]) == SUCCESS))
+		fractal_init(&fractal, argv);
+	else 
 	{
-		fractal_init(&fractal, argv[1]);
-		if (!ft_strncmp(fractal.name, "julia\0", 6))
-		{
-			fractal.julia_r = atod(argv[2]);
-			fractal.julia_i = atod(argv[3]);
-		}
+		write(1, "Fractals available for exploration:\n", 36);
+		write(1, "./fractol Mandelbrot\n", 21);
+		write(1,"./fractol julia real<-1,1> imaginary<-1,1>\n", 43);
+		exit(EXIT_FAILURE);
+	}
 		render_window(fractal);
 		mlx_key_hook(fractal.window, &my_keyhook, &fractal);
 		mlx_scroll_hook(fractal.window, &my_scrollhook, &fractal);
@@ -134,8 +117,4 @@ int32_t main(int argc, char *argv[])
 		mlx_close_window(fractal.window);
 		mlx_terminate(fractal.window);
 		return (EXIT_SUCCESS);
-	}
-	else
-		ft_exit();
-	return (0);
 }
