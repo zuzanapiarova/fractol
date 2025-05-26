@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:21 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/24 13:42:41 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/26 11:19:17 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 // leave white if point did not escape in fractal.iterations num of iterations
 void set_pixel(int x, int y, t_fractal f)
 {
-	t_complex z;
-	t_complex c;
-	int i;
+	t_complex	z;
+	t_complex	c;
+	int			i;
 
 	z.real = 0;
 	z.imaginary = 0;
@@ -39,7 +39,18 @@ void set_pixel(int x, int y, t_fractal f)
 	{
 		z = complex_operation(z, c);
 		if (pow(z.real, 2) + pow(z.imaginary, 2) > f.escape_value)
-			return (mlx_put_pixel(f.img, x, y, set_color(i, f.colorway)));
+		{
+			// --- Smooth coloring ---
+			double zn = sqrt(z.real * z.real + z.imaginary * z.imaginary);
+			double nu = log(log(zn)) / log(2.0);
+			double smooth_i = i + 1 - nu;
+
+			// scale smooth_i to color gradient (e.g. 0 to 1)
+			double t = smooth_i / f.iters;
+			// uint32_t color = set_color(t, i, f.colorway);
+			uint32_t color = interpolate_color(t);
+			return (mlx_put_pixel(f.img, x, y, color)); // set_color(i, f.colorway)
+		}
 		i++;
 	}
 	mlx_put_pixel(f.img, x, y, f.inside);
@@ -105,16 +116,16 @@ int32_t main(int argc, char *argv[])
 	else 
 	{
 		write(1, "Fractals available for exploration:\n", 36);
-		write(1, "./fractol Mandelbrot\n", 21);
+		write(1, "./fractol mandelbrot\n", 21);
 		write(1,"./fractol julia real<-1,1> imaginary<-1,1>\n", 43);
 		exit(EXIT_FAILURE);
 	}
-		render_window(fractal);
-		mlx_key_hook(fractal.window, &my_keyhook, &fractal);
-		mlx_scroll_hook(fractal.window, &my_scrollhook, &fractal);
-		mlx_close_hook(fractal.window, &my_closehook, &fractal);
-		mlx_loop(fractal.window);
-		mlx_close_window(fractal.window);
-		mlx_terminate(fractal.window);
-		return (EXIT_SUCCESS);
+	render_window(fractal);
+	mlx_key_hook(fractal.window, &my_keyhook, &fractal);
+	mlx_scroll_hook(fractal.window, &my_scrollhook, &fractal);
+	mlx_close_hook(fractal.window, &my_closehook, &fractal);
+	mlx_loop(fractal.window);
+	mlx_close_window(fractal.window);
+	mlx_terminate(fractal.window);
+	return (SUCCESS);
 }

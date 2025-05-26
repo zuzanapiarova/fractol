@@ -6,7 +6,7 @@
 /*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:40 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/24 13:44:49 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/26 11:18:19 by zuzanapiaro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,10 @@
 
 # include <stdlib.h>	// malloc free
 # include <unistd.h>	// write
+# include <stdint.h> // uint types
 # include <stdio.h>	// printf
 # include <math.h>	// math functions
+#include <stdint.h> // unit_32 type
 # include "../MLX42/include/MLX42/MLX42.h" //minilibx
 
 // preprocessor macros
@@ -81,9 +83,10 @@ void		my_keyhook(mlx_key_data_t keydata, void *fractal);
 void		my_scrollhook(double xdelta, double ydelta, void *fractal);
 void		my_closehook(void *fractal);
 // utils
+uint32_t	interpolate_color(double t);
 int			ft_strncmp(char *s1, char *s2, int n);
 double		atod(char *str);
-int			set_color(int i, char *color);
+int			set_color(double t, int i, char *color);
 int			ft_isdigit(int c);
 int			ft_error(char *msg);
 size_t		ft_strlen(const char *str);
