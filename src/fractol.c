@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fractol.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:21 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/26 11:19:17 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/26 19:41:18 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void set_pixel(int x, int y, t_fractal f)
 	t_complex	z;
 	t_complex	c;
 	int			i;
+	uint32_t	color;
 
 	z.real = 0;
 	z.imaginary = 0;
@@ -40,16 +41,8 @@ void set_pixel(int x, int y, t_fractal f)
 		z = complex_operation(z, c);
 		if (pow(z.real, 2) + pow(z.imaginary, 2) > f.escape_value)
 		{
-			// --- Smooth coloring ---
-			double zn = sqrt(z.real * z.real + z.imaginary * z.imaginary);
-			double nu = log(log(zn)) / log(2.0);
-			double smooth_i = i + 1 - nu;
-
-			// scale smooth_i to color gradient (e.g. 0 to 1)
-			double t = smooth_i / f.iters;
-			// uint32_t color = set_color(t, i, f.colorway);
-			uint32_t color = interpolate_color(t);
-			return (mlx_put_pixel(f.img, x, y, color)); // set_color(i, f.colorway)
+			color = coloring_algorithm(z, i, f);
+			return (mlx_put_pixel(f.img, x, y, color));
 		}
 		i++;
 	}
@@ -81,28 +74,21 @@ void fractal_init(t_fractal *f, char **argv)
 		f->julia_r = atod(argv[2]);
 		f->julia_i = atod(argv[3]);
 	}
-	f->iters = 15;
-	f->escape_value = 8;
-	f->colorway = "multi";
-	f->inside = W;
+	f->iters = 25;
+	f->escape_value = DIVERGENT_VALUE;
+	f->colorway = "tropic";
+	get_colorway_tropic(&f->colorway, f->colors);
+	f->inside = B;
 	f->xstart = -2.2;
 	f->xend = 0.8;
 	f->ystart = 1.2;
 	f->yend = -1.8;
 	f->window = mlx_init(WIDTH, HEIGHT, f->name, false);
 	if (!f->window)
-	{
-		mlx_close_window(f->window);
-		mlx_terminate(f->window);
-		exit(EXIT_FAILURE);
-	}
+		clean_exit(f, EXIT_FAILURE);
 	f->img = mlx_new_image(f->window, WIDTH, HEIGHT);
 	if (!f->img || (mlx_image_to_window(f->window, f->img, 0, 0) < 0))
-	{
-		mlx_close_window(f->window);
-		mlx_terminate(f->window);
-		exit(EXIT_FAILURE);
-	}
+		clean_exit(f, EXIT_FAILURE);
 }
 
 int32_t main(int argc, char *argv[])

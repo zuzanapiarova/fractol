@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hooks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:47:17 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/24 13:56:06 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/26 19:09:30 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,27 @@ void	aswd_and_colors_hook(mlx_key_data_t keydata, t_fractal *f)
 	else if (keydata.key == MLX_KEY_D && keydata.action == 0)
 		f->julia_r += 0.01;
 	else if (keydata.key == MLX_KEY_W && keydata.action == 0)
-		f->julia_i -= 0.01;
-	else if (keydata.key == MLX_KEY_S && keydata.action == 0)
 		f->julia_i += 0.01;
+	else if (keydata.key == MLX_KEY_S && keydata.action == 0)
+		f->julia_i -= 0.01;
 	else if (keydata.key == MLX_KEY_1 || keydata.key == MLX_KEY_KP_1)
 		f->inside = W;
 	else if (keydata.key == MLX_KEY_2 || keydata.key == MLX_KEY_KP_2)
 		f->inside = B;
 	else if (keydata.key == MLX_KEY_3 || keydata.key == MLX_KEY_KP_3)
-		f->inside = P;
+		get_colorway_tropic(&f->colorway, f->colors);
 	else if (keydata.key == MLX_KEY_4 || keydata.key == MLX_KEY_KP_4)
-		f->colorway = "multi";
+		get_colorway_sunset(&f->colorway, f->colors);
 	else if (keydata.key == MLX_KEY_5 || keydata.key == MLX_KEY_KP_5)
-		f->colorway = "blue";
+		get_colorway_cosmic(&f->colorway, f->colors);
+	else if (keydata.key == MLX_KEY_6 || keydata.key == MLX_KEY_KP_6)
+		get_colorway_oceans(&f->colorway, f->colors);
+	else if (keydata.key == MLX_KEY_7 || keydata.key == MLX_KEY_KP_7)
+		get_colorway_purple(&f->colorway, f->colors);
+	else if (keydata.key == MLX_KEY_8 || keydata.key == MLX_KEY_KP_8)
+		get_colorway_trippy(&f->colorway, f->colors);
+	else if (keydata.key == MLX_KEY_9 || keydata.key == MLX_KEY_KP_9)
+		get_colorway_electric(&f->colorway, f->colors);
 }
 
 void	arrows_hook(mlx_key_data_t keydata, t_fractal *f)

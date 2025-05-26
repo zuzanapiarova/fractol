@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "mlx42.h": "c",
+        "random": "c",
+        "fractol.h": "c"
+    }
+}

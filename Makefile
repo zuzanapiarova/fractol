@@ -21,7 +21,8 @@ SRCS	:=	$(SRC_DIR)/fractol.c \
  			$(SRC_DIR)/math.c \
 			$(SRC_DIR)/utils.c \
 			$(SRC_DIR)/string_utils.c \
-			$(SRC_DIR)/hooks.c
+			$(SRC_DIR)/hooks.c \
+			$(SRC_DIR)/colorways.c
 
 OBJS	:= ${SRCS:.c=.o}
 
