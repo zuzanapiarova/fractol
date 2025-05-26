@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fractol.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zuzanapiarova <zuzanapiarova@student.42    +#+  +:+       +#+        */
+/*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:40 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/26 11:18:19 by zuzanapiaro      ###   ########.fr       */
+/*   Updated: 2025/05/26 15:07:17 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,31 +26,6 @@
 # define WIDTH	1000
 # define ERROR 1
 # define SUCCESS 0
-# define W 0xffffffff
-# define B 0x000000ff
-# define A 0x01ffffff
-# define R 0xd91116ff
-# define Y 0xfff700ff
-# define P 0x590067ff
-# define BA 0x00264Dff
-# define BB 0x003366ff
-# define BC 0x004080ff
-# define BE 0x0059B3ff
-# define BF 0x0066CCff
-# define BG 0x0073E6ff
-# define BH 0x0080FFff
-# define BI 0x3399FFff
-# define BJ 0x66B2FFff
-# define A1 0xFF00FFFF
-# define A2 0xFF0066FF
-# define A3 0xFF3300FF
-# define A5 0xFF9900FF
-# define A6 0xFFCC00FF
-# define A7 0xCCFF00FF
-# define A8 0x66FF00FF
-# define A9 0x00FF66FF
-# define A0 0x00FFFFFF
-# define COLORWAY_SIZE 9
 
 typedef struct s_fractal
 {
