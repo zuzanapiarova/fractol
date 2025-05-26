@@ -56,6 +56,7 @@ clean:
 
 fclean: clean
 	@rm -rf $(NAME)
+	@rm -rf $(LIBMLX)
 
 re: clean all
 
