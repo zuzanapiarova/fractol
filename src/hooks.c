@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:47:17 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/26 19:09:30 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/27 10:43:02 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	my_keyhook(mlx_key_data_t keydata, void *fractal)
 		f->iters -= 5;
 	arrows_hook(keydata, f);
 	aswd_and_colors_hook(keydata, f);
-	render_window(*f);
+	render_window(f);
 }
 
 // scroll on mouse movement, when ydelta < 0 zoom in, when ydelta > 0 zoom out
@@ -118,7 +118,7 @@ void	my_scrollhook(double xdelta, double ydelta, void *fractal)
 		f->xstart -= 0.1 * diff;
 		f->xend += 0.1 * diff;
 	}
-	render_window(*f);
+	render_window(f);
 }
 
 void	my_closehook(void *fractal)
@@ -128,5 +128,7 @@ void	my_closehook(void *fractal)
 	f = (t_fractal *)fractal;
 	mlx_close_window(f->window);
 	mlx_terminate(f->window);
-	exit(ERROR);
+	free(f->pixels_buffer);
+	f->pixels_buffer = NULL;
+	exit(EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:56:45 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/26 18:25:06 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/27 10:01:21 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,14 @@ int	ft_error(char *msg)
 }
 
 // cleans resources and exits the program
-void	clean_exit(t_fractal *f, int exit_code)
+void	clean_exit(t_fractal *f, int exit_code, char *msg)
 {
+	free(f->pixels_buffer);
+	f->pixels_buffer = NULL;
 	mlx_close_window(f->window);
 	mlx_terminate(f->window);
+	if (msg)
+		write(2, msg, ft_strlen(msg));
 	exit(exit_code);
 }
 

@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:21 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/26 19:41:18 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/27 10:59:54 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,54 +14,97 @@
 
 // clone MLX42: git clone https://github.com/codam-coding-college/MLX42.git
 
+// accepts the start and end y of a thread's section
 // for each pixel we perform the mandelbrot set function z = z^2 + c
 // and color it dependeing on how many iterations it took for point to escape
-// leave white if point did not escape in fractal.iterations num of iterations
-void set_pixel(int x, int y, t_fractal f)
+// set to fractal->inside color if point didnt escape in less than fractal.iterations
+void	set_pixel(int x, int y, t_fractal *f)
 {
 	t_complex	z;
 	t_complex	c;
 	int			i;
-	uint32_t	color;
 
 	z.real = 0;
 	z.imaginary = 0;
-	c.real = scale(x, f.xstart, f.xend, WIDTH);
-	c.imaginary = scale(y, f.ystart, f.yend, HEIGHT);
-	if (!ft_strncmp(f.name, "julia\0", 6))
+	c.real = scale(x, f->xstart, f->xend, WIDTH);
+	c.imaginary = scale(y, f->ystart, f->yend, HEIGHT);
+	if (!ft_strncmp(f->name, "julia\0", 6))
 	{
-		z.real = (scale(x, f.xstart, f.xend, WIDTH));
-		z.imaginary = (scale(y, f.ystart, f.yend, HEIGHT));
-		c.real = f.julia_r;
-		c.imaginary = f.julia_i;
+		z.real = (scale(x, f->xstart, f->xend, WIDTH));
+		z.imaginary = (scale(y, f->ystart, f->yend, HEIGHT));
+		c.real = f->julia_r;
+		c.imaginary = f->julia_i;
 	}
 	i = 0;
-	while (i < f.iters)
+	while (i < f->iters)
 	{
 		z = complex_operation(z, c);
-		if (pow(z.real, 2) + pow(z.imaginary, 2) > f.escape_value)
+		if (pow(z.real, 2) + pow(z.imaginary, 2) > f->escape_value)
 		{
-			color = coloring_algorithm(z, i, f);
-			return (mlx_put_pixel(f.img, x, y, color));
+			f->pixels_buffer[y * WIDTH + x] = coloring_algorithm(z, i, f);
+			return ;
 		}
 		i++;
 	}
-	mlx_put_pixel(f.img, x, y, f.inside);
+	f->pixels_buffer[y * WIDTH + x] = f->inside;
 }
 
+// thread routine - renders the pixels for given number of rows
 // iterates through window pixels one by one, each pixel in each row,
 // to set its color based on whether it escaped and in how many iteration
-void render_window(t_fractal fractal)
+// end_row is not rendered, as it is also teh start_row for the next section
+void	*render_section(void *arg)
 {
-	int x;
-	int y;
-
-	y = -1;
-	while (++y < HEIGHT)
+	t_thread_data	*data;
+	int				x;
+	int				y;
+	
+	data = (t_thread_data *)arg;
+	y = data->start_row;
+	while (y < data->end_row)
 	{
-		x = -1;
-		while (++x < WIDTH)
-			set_pixel(x, y, fractal);
+		x = 0;
+		while (x < WIDTH)
+		{
+			set_pixel(x, y, data->f);
+			x++;
+		}
+		y++;
+	}
+	return (NULL);
+}
+
+// separates the window into same-size sections of rows 
+// and passes each section to rendering function
+// the last section has the leftover rows
+void render_window(t_fractal *fractal)
+{
+	pthread_t		threads[NUM_THREADS];
+	t_thread_data	thread_data[NUM_THREADS];
+	int				rows_per_thread;
+	int				i;
+
+	i = 0;
+	rows_per_thread = HEIGHT / NUM_THREADS;
+	while (i < NUM_THREADS)
+	{
+		thread_data[i].start_row = i * rows_per_thread;
+		thread_data[i].end_row = (i + 1) * rows_per_thread;
+		if (i == NUM_THREADS - 1)
+			thread_data[i].end_row = HEIGHT;
+		thread_data[i].f = fractal;
+		pthread_create(&threads[i], NULL, render_section, &thread_data[i]);
+		i++;
+	}
+	i = -1;
+	while (++i < NUM_THREADS)
+		pthread_join(threads[i], NULL);
+	i = -1;
+	while (++i < WIDTH * HEIGHT)
+	{
+		int x = i % WIDTH;
+		int y = i / WIDTH;
+		mlx_put_pixel(fractal->img, x, y, fractal->pixels_buffer[i]);
 	}
 }
 
@@ -83,12 +126,15 @@ void fractal_init(t_fractal *f, char **argv)
 	f->xend = 0.8;
 	f->ystart = 1.2;
 	f->yend = -1.8;
+	f->pixels_buffer = malloc(WIDTH * HEIGHT * sizeof(uint32_t));
+	if (!f->pixels_buffer)
+		exit(ft_error("Malloc error for pixels buffer.\n"));
 	f->window = mlx_init(WIDTH, HEIGHT, f->name, false);
 	if (!f->window)
-		clean_exit(f, EXIT_FAILURE);
+		clean_exit(f, EXIT_FAILURE, "Error creating window.\n");
 	f->img = mlx_new_image(f->window, WIDTH, HEIGHT);
 	if (!f->img || (mlx_image_to_window(f->window, f->img, 0, 0) < 0))
-		clean_exit(f, EXIT_FAILURE);
+		clean_exit(f, EXIT_FAILURE, "Error putting image to window.\n");
 }
 
 int32_t main(int argc, char *argv[])
@@ -101,17 +147,18 @@ int32_t main(int argc, char *argv[])
 		fractal_init(&fractal, argv);
 	else 
 	{
-		write(1, "Fractals available for exploration:\n", 36);
-		write(1, "./fractol mandelbrot\n", 21);
-		write(1,"./fractol julia real<-1,1> imaginary<-1,1>\n", 43);
+		write(2, "Fractals available for exploration:\n", 36);
+		write(2, "./fractol mandelbrot\n", 21);
+		write(2,"./fractol julia real<-1,1> imaginary<-1,1>\n", 43);
 		exit(EXIT_FAILURE);
 	}
-	render_window(fractal);
+	render_window(&fractal);
 	mlx_key_hook(fractal.window, &my_keyhook, &fractal);
 	mlx_scroll_hook(fractal.window, &my_scrollhook, &fractal);
 	mlx_close_hook(fractal.window, &my_closehook, &fractal);
 	mlx_loop(fractal.window);
 	mlx_close_window(fractal.window);
 	mlx_terminate(fractal.window);
+	free(fractal.pixels_buffer);
 	return (SUCCESS);
 }

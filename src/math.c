@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:58 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/26 19:11:51 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/27 10:51:48 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,14 @@ t_complex	complex_operation(t_complex z, t_complex c)
 uint32_t interpolate_color_hsv(t_fractal *f, double t)
 {
 	int			i;
-	int			colors_size;
 	double		local_t;
 
-	colors_size = sizeof(f->colors) / sizeof(f->colors[0]);
 	if (t <= f->colors[0].pos)
 		return (f->colors[0].r << 24) | (f->colors[0].g << 16) | f->colors[0].b << 8 | 0xFF;
-	if (t >= f->colors[colors_size - 1].pos)
-		return (f->colors[colors_size - 1].r << 24) | (f->colors[colors_size - 1].g << 16) | f->colors[colors_size - 1].b << 8 | 0xFF;
+	if (t >= f->colors[COLORS_SIZE - 1].pos)
+		return (f->colors[COLORS_SIZE - 1].r << 24) | (f->colors[COLORS_SIZE - 1].g << 16) | f->colors[COLORS_SIZE - 1].b << 8 | 0xFF;
 	i = -1;
-	while (++i < colors_size - 1)
+	while (++i < COLORS_SIZE - 1)
 	{
 		if (t >= f->colors[i].pos && t <= f->colors[i + 1].pos)
 		{
@@ -78,7 +76,7 @@ uint32_t interpolate_color_hsv(t_fractal *f, double t)
 // smooth_i = computes a smooth version of the iteration count
 // t = normalizes smooth_i to the range [0.0, 1.0] so it fits into the gradient
 // squaring t helps use more of the palette  from the upper parts
-uint32_t	coloring_algorithm(t_complex z, int i, t_fractal f)
+uint32_t	coloring_algorithm(t_complex z, int i, t_fractal *f)
 {
 	double		zn;
 	double		nu;
@@ -88,7 +86,7 @@ uint32_t	coloring_algorithm(t_complex z, int i, t_fractal f)
 	zn = sqrt(z.real * z.real + z.imaginary * z.imaginary);
 	nu = log(log(zn)) / log(2.0);
 	smooth_i = i + 1 - nu;
-	t = smooth_i / f.iters;
+	t = smooth_i / f->iters;
 	t = pow(t, 0.4);
-	return (interpolate_color_hsv(&f, t));
+	return (interpolate_color_hsv(f, t));
 }

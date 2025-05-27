@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 18:18:14 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/26 19:41:52 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/27 10:55:12 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // creates array of colors based on stored colorway
 // it is given by 5 control points
-void	get_colorway_tropic(char **colorway, t_color *colors)
+void	get_colorway_tropic(char **colorway, t_color colors[8])
 {
     *colorway = "tropic";
     colors[0] = (t_color){0.00, 0, 128, 128};     // Teal
@@ -82,14 +82,14 @@ void get_colorway_purple(char **colorway, t_color *colors)
 void get_colorway_trippy(char **colorway, t_color *colors)
 {
     *colorway = "trippy";
-    colors[1] = (t_color){0.00, 255, 0, 0};        // Red
-    colors[2] = (t_color){0.14, 255, 0, 255};      // Magenta
-    colors[3] = (t_color){0.28, 255, 128, 0};      // Neon orange
-    colors[4] = (t_color){0.42, 255, 255, 0};      // Yellow
-    colors[5] = (t_color){0.56, 0, 255, 0};        // Bright green
-    colors[6] = (t_color){0.70, 0, 255, 255};      // Cyan
-    colors[7] = (t_color){0.84, 0, 0, 255};        // Blue
-    colors[8] = (t_color){1.00, 255, 255, 255};    // White
+    colors[0] = (t_color){0.00, 255, 0, 0};        // Red
+    colors[1] = (t_color){0.14, 255, 0, 255};      // Magenta
+    colors[2] = (t_color){0.28, 255, 128, 0};      // Neon orange
+    colors[3] = (t_color){0.42, 255, 255, 0};      // Yellow
+    colors[4] = (t_color){0.56, 0, 255, 0};        // Bright green
+    colors[5] = (t_color){0.70, 0, 255, 255};      // Cyan
+    colors[6] = (t_color){0.84, 0, 0, 255};        // Blue
+    colors[7] = (t_color){1.00, 255, 255, 255};    // White
 }
 
 void get_colorway_electric(char **colorway, t_color *colors)
