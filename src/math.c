@@ -6,11 +6,24 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:58 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/27 10:51:48 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/27 11:03:51 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fractol.h"
+
+void	draw_image(t_fractal *fractal)
+{
+	int	i;
+	
+	i = -1;
+	while (++i < WIDTH * HEIGHT)
+	{
+		int x = i % WIDTH;
+		int y = i / WIDTH;
+		mlx_put_pixel(fractal->img, x, y, fractal->pixels_buffer[i]);
+	}
+}
 
 // linear interpolation function = maps/scales points proportionate and
 // linearly to other points to keep the proportions but scaled in/out

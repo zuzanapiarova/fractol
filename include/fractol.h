@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:40 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/27 10:42:52 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/27 11:04:14 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ double		scale(double num, double new_min, double new_max, double old_max);
 t_complex	complex_operation(t_complex z, t_complex c);
 uint32_t	interpolate_color_hsv(t_fractal *f, double t);
 uint32_t	coloring_algorithm(t_complex z, int i, t_fractal *f);
+void		draw_image(t_fractal *fractal);
 
 // utils
 int			ft_error(char *msg);

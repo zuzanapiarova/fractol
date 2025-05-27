@@ -6,7 +6,7 @@
 /*   By: zpiarova <zpiarova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 17:43:21 by zpiarova          #+#    #+#             */
-/*   Updated: 2025/05/27 10:59:54 by zpiarova         ###   ########.fr       */
+/*   Updated: 2025/05/27 11:04:26 by zpiarova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,13 +99,7 @@ void render_window(t_fractal *fractal)
 	i = -1;
 	while (++i < NUM_THREADS)
 		pthread_join(threads[i], NULL);
-	i = -1;
-	while (++i < WIDTH * HEIGHT)
-	{
-		int x = i % WIDTH;
-		int y = i / WIDTH;
-		mlx_put_pixel(fractal->img, x, y, fractal->pixels_buffer[i]);
-	}
+	draw_image(fractal);
 }
 
 // initialize the fractal struct with the initial data
